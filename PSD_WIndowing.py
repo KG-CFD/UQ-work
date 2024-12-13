@@ -94,27 +94,3 @@ plt.savefig("PSD_plot_windowed_signals.png")
 plt.show()
 
 
-# Optional: Print some statistics about noise reduction
-def calculate_noise_reduction(original_psd, windowed_psd):
-    """
-    Calculate noise reduction ratio
-    """
-    # Compare low-frequency components
-    low_freq_original = np.mean(original_psd[:len(original_psd) // 10])
-    low_freq_windowed = np.mean(windowed_psd[:len(windowed_psd) // 10])
-
-    noise_reduction = (low_freq_original - low_freq_windowed) / low_freq_original * 100
-    return noise_reduction
-
-
-print("\nNoise Reduction Analysis:")
-for i in range(4):
-    print(f"\nChannel {i + 1}:")
-    original_frequencies, original_psd = welch(delta_phi[i], fs, nfft=len(delta_phi[i]))
-
-    for window_type in window_types:
-        windowed_signal = apply_window(delta_phi[i], window_type)
-        windowed_frequencies, windowed_psd = welch(windowed_signal, fs, nfft=len(windowed_signal))
-
-        noise_reduction = calculate_noise_reduction(original_psd, windowed_psd)
-        print(f"{window_type.capitalize()} Window Noise Reduction: {noise_reduction:.2f}%")
