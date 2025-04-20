@@ -34,7 +34,7 @@ move_to_index('H8')
      """ produces square board with dimensions size(intger) and fills square with string values of empty board
      corresponding with lower case 'x'. """
      i_range,j_range= size -1, size -1
-     for i in range(size):
+     for i in range(size):    # indexing board
          for j in range(size):
 
 
