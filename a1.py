@@ -19,14 +19,14 @@ num_hours()
 size = 8
 def move_to_index(move: str) -> tuple[int,int]:
     mov_index =()
-    if 64 < ord(move[0]) < 73 and int(move[1]) < 9:
+    if 64 < ord(move[0]) < 90:
         index1 =int(ord(move[0])- ord('A'))
-        index2 = int(move[1]) - 1
+        index2 = int(move[1:]) - 1
         mov_index =(index1,index2)
         print(mov_index)
         return mov_index
     else :
-        print('Invalid move, make sure indexing is within range (A-H and 1-8)')
+        print('Need capital letter')
 
 
 move_to_index('H8')
@@ -39,14 +39,14 @@ def generate_empty_board(size: int) -> list[list[str]]:
     return a
 
 
-def generate_initial_board(board) -> list[list[str]]:
+def generate_initial_board() -> list[list[str]]:
     """ Takes the board which is list of list filled with strings and initialises starting values of 'O' and 'X' """
-    board[3][3]='O'
-    board[3][4]= 'X'
-    board[4][3] ='X'
-    board[4][4] ='O'
-    print(board)
-    return board
+    a[3][3]='O'
+    a[3][4]= 'X'
+    a[4][3] ='X'
+    a[4][4] ='O'
+    print(a)
+    return a
 
 
 def check_winner(board: list[list[str]]) -> str:
@@ -70,9 +70,9 @@ def check_winner(board: list[list[str]]) -> str:
         return ""
 
 
-
+move_to_index('K99')
 a =generate_empty_board(size)
-generate_initial_board(a)
+generate_initial_board()
 board =  [["X","X"],["O","X"]]
 check_winner(board)
 def main() -> None:
