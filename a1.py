@@ -16,6 +16,7 @@ def num_hours()-> float:
 
 num_hours()
 
+size = 8
 def move_to_index(move: str) -> tuple[int,int]:
     mov_index =()
     if 64 < ord(move[0]) < 73 and int(move[1]) < 9:
@@ -30,17 +31,51 @@ def move_to_index(move: str) -> tuple[int,int]:
 
 move_to_index('H8')
 
- def generate_empty_board(size: int) -> list[list[str]]:
-     """ produces square board with dimensions size(intger) and fills square with string values of empty board
-     corresponding with lower case 'x'. """
-     i_range,j_range= size -1, size -1
-     for i in range(size):    # indexing board
-         for j in range(size):
+def generate_empty_board(size: int) -> list[list[str]]:
+    """ produces square board with dimensions size(intger) and fills square with string values of empty board
+    corresponding with lower case 'x'. """
+    a = [['+' for _ in range(size)] for _ in range(size)]
+    print(a)
+    return a
 
 
+def generate_initial_board(board) -> list[list[str]]:
+    """ Takes the board which is list of list filled with strings and initialises starting values of 'O' and 'X' """
+    board[3][3]='O'
+    board[3][4]= 'X'
+    board[4][3] ='X'
+    board[4][4] ='O'
+    print(board)
+    return board
 
 
+def check_winner(board: list[list[str]]) -> str:
+    x_count = 0
+    o_count = 0
 
+    for i, row in enumerate(board):
+        for j, element in enumerate(row):
+            if element == 'X':
+                x_count += 1
+            elif element == 'O':
+                o_count += 1
+
+    if x_count > o_count:
+        print('x')
+        return 'X'
+    elif o_count > x_count:
+        print('O')
+        return 'O'
+    else:
+        return ""
+
+def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
+
+
+a =generate_empty_board(size)
+generate_initial_board(a)
+board =  [["X","O"],["O","X"]]
+check_winner(board)
 def main() -> None:
     """
     The main function (You should write a better docstring!)
