@@ -69,12 +69,11 @@ def check_winner(board: list[list[str]]) -> str:
     else:
         return ""
 
-def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
 
 
 a =generate_empty_board(size)
 generate_initial_board(a)
-board =  [["X","O"],["O","X"]]
+board =  [["X","X"],["O","X"]]
 check_winner(board)
 def main() -> None:
     """
