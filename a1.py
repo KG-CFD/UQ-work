@@ -83,14 +83,14 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
                 difference = (position[1]-new_position[1])
                 for i in range(position[1],new_position[1]-1):
                     k +=1
-                    intermediates.append(((position[1]),(position[1]+k)))
+                    intermediates.append(((position[0]),(position[1]+k)))
                     print(intermediates)
 
             else :
                 for i in range(position[0],new_position[0]-1):
                     k +=1
                     difference = (position[0]-new_position[0])
-                    intermediates.append(((position[1]+k),(position[1])))
+                    intermediates.append(((position[0]+k),(position[1])))
                     print(intermediates)
                     #working code excluding diagonals
         else:
@@ -103,7 +103,7 @@ a =generate_empty_board(size)
 generate_initial_board()
 board =  [["X","X"],["O","X"]]
 check_winner(board)
-get_intermediate_locations((0,0),(6,0))
+get_intermediate_locations((5,2),(5,6))
 
 def main() -> None:
     """
