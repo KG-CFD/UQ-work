@@ -19,7 +19,7 @@ num_hours()
 size = 8
 def move_to_index(move: str) -> tuple[int,int]:
     mov_index =()
-    if 64 < ord(move[0]) < 90:
+    if 64 < ord(move[0]) < 91:
         index1 =int(ord(move[0])- ord('A'))
         index2 = int(move[1:]) - 1
         mov_index =(index1,index2)
@@ -40,7 +40,8 @@ def generate_empty_board(size: int) -> list[list[str]]:
 
 
 def generate_initial_board() -> list[list[str]]:
-    """ Takes the board which is list of list filled with strings and initialises starting values of 'O' and 'X' """
+    """ Takes the board which is list of list filled with strings
+    and initialises starting values of 'O' and 'X' """
     a[3][3]='O'
     a[3][4]= 'X'
     a[4][3] ='X'
@@ -70,11 +71,40 @@ def check_winner(board: list[list[str]]) -> str:
         return ""
 
 
-move_to_index('K99')
+def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
+    intermediates =[]
+    k=0
+    """Generates board with indiced placement."""
+    board_indices =[[(i, j) for j in range(size)] for i in range(size)] #not needed for this section should move to task 3
+    print(board_indices[0][1])
+    for i in range((len(position))):
+        if position[i] == new_position[i]:# Check to see if on same row
+            if i == 0:
+                difference = (position[1]-new_position[1])
+                for i in range(position[1],new_position[1]-1):
+                    k +=1
+                    intermediates.append(((position[1]),(position[1]+k)))
+                    print(intermediates)
+
+            else :
+                for i in range(position[0],new_position[0]-1):
+                    k +=1
+                    difference = (position[0]-new_position[0])
+                    intermediates.append(((position[1]+k),(position[1])))
+                    print(intermediates)
+                    #working code excluding diagonals
+        else:
+            print('positions are possibly diagonal of each other')
+    return intermediates
+
+
+move_to_index('Z100')
 a =generate_empty_board(size)
 generate_initial_board()
 board =  [["X","X"],["O","X"]]
 check_winner(board)
+get_intermediate_locations((0,0),(6,0))
+
 def main() -> None:
     """
     The main function (You should write a better docstring!)
