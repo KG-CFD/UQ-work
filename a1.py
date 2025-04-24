@@ -105,7 +105,7 @@ def display_board(board: list[list[str]]):
 
     header = "  " + "".join(f"{i+1 :2}" for i in range(columns))
     print(header)  # prints column headers
-    header_2 ="  " + "".join(f"- " for i in range(columns)) #top and bottom edge of board with dashed lines
+    header_2 ="  " + "".join(f"- " for i in range(columns+1)) #top and bottom edge of board with dashed lines
     print(header_2)
     for i in range(rows):
         row_label = chr(ord('A') + i) +"|"
@@ -113,6 +113,15 @@ def display_board(board: list[list[str]]):
         cells = "".join(f"{cell:^2}" for cell in board[i]) +"|"
         print(f"{row_label} {cells}")
     print(header_2)
+
+def get_valid_command(valid_moves: list[str]) -> str:
+    while True:  # Keep repeating until command satisfied
+        val = input("Please enter move (or H for help): ").upper()
+        updated_valid_moves =valid_moves.copy()
+        updated_valid_moves.extend(['Q','q','H','h'])
+        if val in updated_valid_moves:
+            return val
+
 
 
 
@@ -123,7 +132,9 @@ generate_initial_board()
 board =  [["X","X","X"],["O","X","X"]]
 check_winner(board)
 get_intermediate_locations((5,2),(5,6))
-display_board(a)
+k = [["Y","U"],["T","O"],["N","G"],["J","A"],["C","K"]]
+display_board(k)
+get_valid_command(["A1","B3"])
 def main() -> None:
     """
     The main function (You should write a better docstring!)
