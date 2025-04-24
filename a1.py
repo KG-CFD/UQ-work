@@ -97,14 +97,33 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
             print('positions are possibly diagonal of each other')
     return intermediates
 
+def display_board(board: list[list[str]]):
+    """Prints game board graphically, takes argument of board which is a list of lists
+     representing game state """
+    rows= len(board)
+    columns =len(board[0])
+
+    header = "  " + "".join(f"{i+1 :2}" for i in range(columns))
+    print(header)  # prints column headers
+    header_2 ="  " + "".join(f"- " for i in range(columns)) #top and bottom edge of board with dashed lines
+    print(header_2)
+    for i in range(rows):
+        row_label = chr(ord('A') + i) +"|"
+        # Format cells with borders and proper spacing
+        cells = "".join(f"{cell:^2}" for cell in board[i]) +"|"
+        print(f"{row_label} {cells}")
+    print(header_2)
+
+
+
 
 move_to_index('Z100')
 a =generate_empty_board(size)
 generate_initial_board()
-board =  [["X","X"],["O","X"]]
+board =  [["X","X","X"],["O","X","X"]]
 check_winner(board)
 get_intermediate_locations((5,2),(5,6))
-
+display_board(a)
 def main() -> None:
     """
     The main function (You should write a better docstring!)
