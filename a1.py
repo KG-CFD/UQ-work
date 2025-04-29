@@ -11,7 +11,6 @@ def num_hours()-> float:
     days =10
     hours =2.5
     total =days*hours
-    print('Total hours spent =', total)
     return days*hours
 
 num_hours()
@@ -78,8 +77,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
     intermediates =[]
     k=0
     """ Generates intermediate positions between 2 chosen positions, either vertical,horizontal or diagonal"""
-    board_indices =[[(i, j) for j in range(BOARD_SIZE)] for i in range(BOARD_SIZE)] #not needed for this section should move to task 3
-    print(board_indices[0][1])
+
     for i in range((len(position))):
         if position[i] == new_position[i]:# Check to see if on same row
             if i == 0:
@@ -106,7 +104,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
             submatrix_size = max(max_row -min_row, max_col -min_col) + 1
 
             diagonals =[]
-            for d in range(submatrix_size):
+            for d in range(max_col-min_col +1):
                 diagonal = []
                 i =min_row
                 j =min_col + d
@@ -117,9 +115,49 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
                 diagonals.append(diagonal)
 
             #case where diagonals are (i+1,j)
-            for d in range(1,submatrix_size):
+            for d in range(1,max_row-min_row +1):
                 diagonal =[]
                 i =min_row + d
+                j =min_col
+                while i <= max_row and j <= max_col:
+                    diagonal.append((i,j))
+                    i += 1
+                    j += 1
+                    diagonals.append(diagonal)
+
+                    # Anti-diagonals
+                    # Diagonals starting from right edge
+                    for d in range(1,max_col-min_col +1):
+                        diagonal = []
+                        i = min_row
+                        j = max_col - d
+                        while i <= max_row and j >= min_col:
+                            diagonal.append((i, j))
+                            i += 1
+                            j -= 1
+                        diagonals.append(diagonal)
+                    # Diagonals starting fro edge
+                    for d in range(1, max_row -min_row +1):
+                        diagonal = []
+                        i = min_row + d
+                        j = max_col
+                        while i <= max_row and j >= min_col:
+                            diagonal.append((i, j))
+                            i += 1
+                            j -= 1
+                        diagonals.append(diagonal)
+
+
+            for diagonal in diagonals:
+                if position in diagonal and new_position in diagonal:
+                    index_1 = diagonal.index(position)
+                    index_2 = diagonal.index(new_position)
+                    start, end = min(index_1, index_2), max(index_1, index_2)
+                    # Return intermediates (excluding start and end)
+                    print(diagonals[start + 1: end])
+                    return diagonal[start + 1: end]
+
+            return []
 
 
 
@@ -212,7 +250,7 @@ move_to_index('Z100')
 a =generate_empty_board(8)
 board =generate_initial_board()
 check_winner(board)
-get_intermediate_locations((5,2),(5,6))
+get_intermediate_locations((1,0),(3,2))
 display_board(board)
 get_reversed_positions(board , 'X')
 make_move(board, "O", "D3")
