@@ -74,95 +74,92 @@ def check_winner(board: list[list[str]]) -> str:
 
 
 def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
-    intermediates =[]
-    k=0
-    """ Generates intermediate positions between 2 chosen positions, either vertical,horizontal or diagonal"""
+    intermediates = []
+    """ Generates intermediate positions between 2 chosen positions, either vertical, horizontal or diagonal """
 
-    for i in range((len(position))):
-        if position[i] == new_position[i]:# Check to see if on same row
-            if i == 0:
-                difference = (position[1]-new_position[1])
-                for i in range(position[1],new_position[1]-1):
-                    k +=1
-                    intermediates.append(((position[0]),(position[1]+k)))
-                    print(intermediates)
+    # Check vertical movement (same column)
+    if position[1] == new_position[1]:
+        step = 1 if new_position[0] > position[0] else -1
+        for x in range(position[0] + step, new_position[0], step):
+            intermediates.append((x, position[1]))
+        return intermediates
 
-            else :
-                for i in range(position[0],new_position[0]-1):
-                    k +=1
-                    difference = (position[0]-new_position[0])
-                    intermediates.append(((position[0]+k),(position[1])))
-                    print(intermediates)
-                    #working code excluding diagonals
-        else:
-            # For the diagonals code finds intermediates by creating smallest
-            # submatrix that contains both positions and checking which diagonal it lies on and returning intermediates
-            min_row =min(position[0],new_position[0])
-            max_row =max(position[0],new_position[0])
-            min_col =min(position[1],new_position[1])
-            max_col =max(position[1], new_position[1])
-            submatrix_size = max(max_row -min_row, max_col -min_col) + 1
+    # Check horizontal movement (same row)
+    if position[0] == new_position[0]:
+        step = 1 if new_position[1] > position[1] else -1
+        for y in range(position[1] + step, new_position[1], step):
+            intermediates.append((position[0], y))
+        return intermediates
 
-            diagonals =[]
-            for d in range(max_col-min_col +1):
-                diagonal = []
-                i =min_row
-                j =min_col + d
-                while i <= max_row and j <= max_col:
-                    diagonals.append((i,j))
-                    i += 1
-                    j += 1
-                diagonals.append(diagonal)
+    # Diagonal movement - using your submatrix approach
+    min_row = min(position[0], new_position[0])
+    max_row = max(position[0], new_position[0])
+    min_col = min(position[1], new_position[1])
+    max_col = max(position[1], new_position[1])
+    submatrix_size = max(max_row - min_row, max_col - min_col) + 1
 
-            #case where diagonals are (i+1,j)
-            for d in range(1,max_row-min_row +1):
-                diagonal =[]
-                i =min_row + d
-                j =min_col
-                while i <= max_row and j <= max_col:
-                    diagonal.append((i,j))
-                    i += 1
-                    j += 1
-                    diagonals.append(diagonal)
+    diagonals = []
 
-                    # Anti-diagonals
-                    # Diagonals starting from right edge
-                    for d in range(1,max_col-min_col +1):
-                        diagonal = []
-                        i = min_row
-                        j = max_col - d
-                        while i <= max_row and j >= min_col:
-                            diagonal.append((i, j))
-                            i += 1
-                            j -= 1
-                        diagonals.append(diagonal)
-                    # Diagonals starting fro edge
-                    for d in range(1, max_row -min_row +1):
-                        diagonal = []
-                        i = min_row + d
-                        j = max_col
-                        while i <= max_row and j >= min_col:
-                            diagonal.append((i, j))
-                            i += 1
-                            j -= 1
-                        diagonals.append(diagonal)
+    # Main diagonals (top-left to bottom-right)
+    # Diagonals starting from left edge
+    for d in range(max_col - min_col + 1):
+        diagonal = []
+        i = min_row
+        j = min_col + d
+        while i <= max_row and j <= max_col:
+            diagonal.append((i, j))
+            i += 1
+            j += 1
+        if diagonal:  # Only add if not empty
+            diagonals.append(diagonal)
 
+    # Diagonals starting from top edge (skip first to avoid duplicate)
+    for d in range(1, max_row - min_row + 1):
+        diagonal = []
+        i = min_row + d
+        j = min_col
+        while i <= max_row and j <= max_col:
+            diagonal.append((i, j))
+            i += 1
+            j += 1
+        if diagonal:
+            diagonals.append(diagonal)
 
-            for diagonal in diagonals:
-                if position in diagonal and new_position in diagonal:
-                    index_1 = diagonal.index(position)
-                    index_2 = diagonal.index(new_position)
-                    start, end = min(index_1, index_2), max(index_1, index_2)
-                    # Return intermediates (excluding start and end)
-                    print(diagonals[start + 1: end])
-                    return diagonal[start + 1: end]
+    # Anti-diagonals (top-right to bottom-left)
+    # Diagonals starting from right edge
+    for d in range(max_col - min_col + 1):
+        diagonal = []
+        i = min_row
+        j = max_col - d
+        while i <= max_row and j >= min_col:
+            diagonal.append((i, j))
+            i += 1
+            j -= 1
+        if diagonal:
+            diagonals.append(diagonal)
 
-            return []
+    # Diagonals starting from top edge (skip first to avoid duplicate)
+    for d in range(1, max_row - min_row + 1):
+        diagonal = []
+        i = min_row + d
+        j = max_col
+        while i <= max_row and j >= min_col:
+            diagonal.append((i, j))
+            i += 1
+            j -= 1
+        if diagonal:
+            diagonals.append(diagonal)
 
+    # Check all diagonals for containing both positions
+    for diagonal in diagonals:
+        if position in diagonal and new_position in diagonal:
+            index1 = diagonal.index(position)
+            index2 = diagonal.index(new_position)
+            start, end = min(index1, index2), max(index1, index2)
+            print(diagonal[start +1:end])
+            return diagonal[start + 1:end]
 
-
-
-    return intermediates
+    return []
 
 def display_board(board: list[list[str]]):
     """ Prints game board and shows"""
@@ -191,48 +188,53 @@ def get_valid_command(valid_moves: list[str]) -> str:
 
 
 def get_reversed_positions(board: list[list[str]], piece: str) -> list[str]:
-
-    if not board or len(board) != 8 or len(board[0]) != 8:
-        return []
-    opponent_piece = 'O' if piece == 'X' else 'X'
-    directions = [(-1, -1), (-1, 0), (-1, 1),
-                  (0, -1), (0, 1),
-                  (1, -1), (1, 0), (1, 1)]
-
+    """Returns all valid moves for the given piece that would flip opponent's pieces"""
+    opponent = 'O' if piece == 'X' else 'X'
     valid_moves = []
+    size = len(board)
 
-    for x in range(8):
-        for y in range(8):
-            if board[x][y] != '+':
-                continue  # Skip occupied positions
+    # Convert position to chess notation (A1, B2, etc.)
+    def index_to_move(index: tuple[int, int]) -> str:
+        """Converts (row, column) index positions to alphanumeric notation (e.g., (0,0) → 'A1')"""
+        row, col = index
+        # Convert row number to letter (0→A, 1→B, etc.)
+        move_char = chr(ord('A') + row)
+        # Column numbers start at 1
+        move_num = str(col + 1)
+        alphanumeric = f"{move_char}{move_num}"
+        print(alphanumeric)
+        return alphanumeric
+    # Check all empty positions
+    for i in range(size):
+        for j in range(size):
+            if board[i][j] != '+':  # Skip non-empty positions
+                continue
 
-            has_valid_move = False
+            # Check all 8 directions
+            for di, dj in [(-1, -1), (-1, 0), (-1, 1),
+                           (0, -1), (0, 1),
+                           (1, -1), (1, 0), (1, 1)]:
+                ni, nj = i + di, j + dj
 
-            for dx, dy in directions:
-                i, j = x + dx, y + dy
-                found_opponent = False
+                # Find endpoint in this direction
+                while 0 <= ni < size and 0 <= nj < size and board[ni][nj] == opponent:
+                    ni += di
+                    nj += dj
 
-                while 0 <= i < 8 and 0 <= j < 8:
-                    if board[i][j] == opponent_piece:
-                        found_opponent = True
-                        i += dx
-                        j += dy
-                    elif board[i][j] == piece and found_opponent:
-                        # Valid move found
-                        has_valid_move = True
-                        break
-                    else:
-                        break  # Empty space or wrong sequence
+                # If we found our piece after opponent pieces
+                if (0 <= ni < size and 0 <= nj < size and
+                        board[ni][nj] == piece and
+                        (ni != i + di or nj != j + dj)):  # At least one piece to flip
 
-                if has_valid_move:
-                    break  # No need to check other directions
+                    # Get intermediate positions
+                    intermediates = get_intermediate_locations((i, j), (ni, nj))
+                    if intermediates:
+                        valid_moves.append(index_to_move((i, j)))
+                        break  # Found at least one valid direction
 
-            if has_valid_move:
-                row_char = chr(ord('A') + x)
-                col_num = y + 1
-                valid_moves.append(f"{row_char}{col_num}")
-    print(sorted(valid_moves))
     return sorted(valid_moves)
+
+
 
 
 def make_move(board: list[list[str]], piece: str, move: str):
