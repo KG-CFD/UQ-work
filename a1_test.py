@@ -46,6 +46,7 @@ def generate_initial_board() -> list[list[str]]:
 
 
 def check_winner(board: list[list[str]]) -> str:
+    """ Checks board postion for the winner by simply counting which players has most pieces"""
     x_count = 0
     o_count = 0
 
@@ -57,7 +58,7 @@ def check_winner(board: list[list[str]]) -> str:
                 o_count += 1
 
     if x_count > o_count:
-        print('x')
+        print('X')
         return 'X'
     elif o_count > x_count:
         print('O')
@@ -89,7 +90,8 @@ def display_board(board: list[list[str]]):
 
 
 def get_valid_command(valid_moves: list[str]) -> str:
-    """Prompts user for valid move."""
+    """Prompts user for valid move, whereby valid move is within updated_valid_moves which is a list with
+    valid board positions for the game including help and quit keys  ."""
     # Add command options to valid moves
     updated_valid_moves = valid_moves.copy()
     updated_valid_moves.extend(['Q', 'H'])
@@ -312,7 +314,8 @@ def play_a_game():
     if winner:
         print(f"\nGame over! Player {winner} wins!")
     else:
-        print("\nGame over! It's a tie!")
+        print(DRAW_TEXT)
+        print(PLAY_AGAIN_PROMPT)
 
 
 play_a_game()
