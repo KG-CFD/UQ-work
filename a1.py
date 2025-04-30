@@ -26,7 +26,12 @@ def move_to_index(move: str) -> tuple[int,int]:
     else :
         print('Need capital letter')
 
-
+def index_to_move(index: tuple[int, int]) -> str:
+    """Converts (row, column) index positions to alphanumeric notation."""
+    row, col = index
+    move_char = chr(ord('A') + row)
+    move_num = str(col + 1)
+    return f"{move_char}{move_num}"
 move_to_index('H8')
 
 def generate_empty_board(size: int) -> list[list[str]]:
@@ -38,9 +43,9 @@ def generate_empty_board(size: int) -> list[list[str]]:
 
 
 def generate_initial_board() -> list[list[str]]:
-    """ Takes the board which is list of list filled with strings
-    and initialises starting values of 'O' and 'X' """
 
+    """ Takes the board which is a list of lists filled with strings and initialises
+    starting board values of 'O' and 'X' """
     board = generate_empty_board(BOARD_SIZE)  # calls earlier function
 
 
@@ -74,8 +79,9 @@ def check_winner(board: list[list[str]]) -> str:
 
 
 def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
+    """ generates intermediate positions between 2 chosen positions"""
     intermediates = []
-    """ Generates intermediate positions between 2 chosen positions, either vertical, horizontal or diagonal """
+    """Generates intermediate positions between 2 chosen positions, either vertical, horizontal or diagonal."""
 
     # Check vertical movement (same column)
     if position[1] == new_position[1]:
@@ -91,7 +97,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
             intermediates.append((position[0], y))
         return intermediates
 
-    # Diagonal movement - using your submatrix approach
+    # Diagonal movement utilizing smaller subsection of the matrix
     min_row = min(position[0], new_position[0])
     max_row = max(position[0], new_position[0])
     min_col = min(position[1], new_position[1])
@@ -172,7 +178,7 @@ def display_board(board: list[list[str]]):
     print(header_2)
     for i in range(rows):
         row_label = chr(ord('A') + i) + VERTICAL_SEPARATOR
-        # Format cells with borders and proper spacing
+        # Format with adequate spacing
         cells = "".join(f"{cell:^2}" for cell in board[i]) + VERTICAL_SEPARATOR
         print(f"{row_label} {cells}")
     print(header_2)
@@ -187,59 +193,63 @@ def get_valid_command(valid_moves: list[str]) -> str:
             return val
 
 
-def get_reversed_positions(board: list[list[str]], piece: str) -> list[str]:
-    """Returns all valid moves for the given piece that would flip opponent's pieces"""
-    opponent = 'O' if piece == 'X' else 'X'
-    valid_moves = []
+def get_reversed_positions(board: list[list[str]], piece: str, position: tuple[int, int]) -> list[tuple[int, int]]:
+    """Returns positions that would be reversed by placing piece at position.
+    Utilizes get_intermediate_locations to fill in the needed positions to flip."""
+    x, y = position
     size = len(board)
 
-    # Convert position to chess notation (A1, B2, etc.)
-    def index_to_move(index: tuple[int, int]) -> str:
-        """Converts (row, column) index positions to alphanumeric notation (e.g., (0,0) → 'A1')"""
-        row, col = index
-        # Convert row number to letter (0→A, 1→B, etc.)
-        move_char = chr(ord('A') + row)
-        # Column numbers start at 1
-        move_num = str(col + 1)
-        alphanumeric = f"{move_char}{move_num}"
-        print(alphanumeric)
-        return alphanumeric
+
+
+
+    opponent = 'O' if piece == 'X' else 'X'
+    reversed_positions = []
+
+    # Check all directions
+    directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+
+    for dx, dy in directions:
+        # Find endpoint
+        i, j = x + dx, y + dy
+
+        if not (0 <= i < size and 0 <= j < size and board[i][j] == opponent):
+            continue
+
+        # Continue walk in this direction until we find  piece
+        while 0 <= i < size and 0 <= j < size and board[i][j] == opponent:
+            i += dx
+            j += dy
+
+        # If we found our piece at the end, get the intermediate positions
+        if 0 <= i < size and 0 <= j < size and board[i][j] == piece:
+            # Use get_intermediate_locations to find positions to flip
+            positions_to_flip = get_intermediate_locations(position, (i, j))
+            reversed_positions.extend(positions_to_flip)
+
+    return reversed_positions
+
+
+
+
+def get_available_moves(board: list[list[str]], player: str) -> list[str]:
+    """Returns all valid moves for the given player."""
+    size = len(board)
+    valid_moves = []
+
     # Check all empty positions
     for i in range(size):
         for j in range(size):
-            if board[i][j] != '+':  # Skip non-empty positions
-                continue
-
-            # Check all 8 directions
-            for di, dj in [(-1, -1), (-1, 0), (-1, 1),
-                           (0, -1), (0, 1),
-                           (1, -1), (1, 0), (1, 1)]:
-                ni, nj = i + di, j + dj
-
-                # Find endpoint in this direction
-                while 0 <= ni < size and 0 <= nj < size and board[ni][nj] == opponent:
-                    ni += di
-                    nj += dj
-
-                # If we found our piece after opponent pieces
-                if (0 <= ni < size and 0 <= nj < size and
-                        board[ni][nj] == piece and
-                        (ni != i + di or nj != j + dj)):  # At least one piece to flip
-
-                    # Get intermediate positions
-                    intermediates = get_intermediate_locations((i, j), (ni, nj))
-                    if intermediates:
-                        valid_moves.append(index_to_move((i, j)))
-                        break  # Found at least one valid direction
-
+            if board[i][j] == '+':  # Empty position
+                # Need to test wether placing at [i][j] would flip any opponents pieces
+                if get_reversed_positions(board, player, (i, j)):
+                    valid_moves.append(index_to_move((i, j)))
+    print(sorted(valid_moves))
     return sorted(valid_moves)
 
-
-
-
 def make_move(board: list[list[str]], piece: str, move: str):
-    e = move_to_index(move)
-    board[e[0]][e[1]] = str(piece)
+    """updates board with the new piece placement  """
+    position = move_to_index(move)
+    board[position[0]][position[1]] = str(piece)
     display_board(board)     # Need to possibly move this function ahead of display function
 
 
@@ -247,14 +257,10 @@ def make_move(board: list[list[str]], piece: str, move: str):
 
 
 
-
-move_to_index('Z100')
-a =generate_empty_board(8)
 board =generate_initial_board()
-check_winner(board)
 get_intermediate_locations((1,0),(3,2))
 display_board(board)
-get_reversed_positions(board , 'X')
+get_reversed_positions(board , 'O',(4,2))
 make_move(board, "O", "D3")
 def main() -> None:
     """
