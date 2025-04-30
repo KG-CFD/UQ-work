@@ -168,20 +168,24 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
     return []
 
 def display_board(board: list[list[str]]):
-    """ Prints game board and shows"""
-    rows= len(board)
-    columns =len(board[0])
+    """Prints game board graphically"""
+    rows = len(board)
+    cols = len(board[0])
 
-    header = "  " + "".join(f"{i+1 :2}" for i in range(columns))
-    print(header)  # prints column headers
-    header_2 ="  " + "".join(f'- ' for i in range(columns+1)) #top and bottom edge of board with dashed lines
-    print(header_2)
+    # Print column numbers
+    print("  " + "".join(f"{i + 1:1}" for i in range(cols)))
+
+    # Print top border
+    print("  " + "-" * (cols ))
+
+    # Print each row
     for i in range(rows):
-        row_label = chr(ord('A') + i) + VERTICAL_SEPARATOR
-        # Format with adequate spacing
-        cells = "".join(f"{cell:^2}" for cell in board[i]) + VERTICAL_SEPARATOR
-        print(f"{row_label} {cells}")
-    print(header_2)
+
+        cells = "".join(board[i])
+        print(f"{chr(ord('A') + i)}|{cells}|")
+
+    # Print bottom border
+    print("  "+ HORIZONTAL_SEPARATOR * (cols ))
 
 def get_valid_command(valid_moves: list[str]) -> str:
     """ Returns all valid moves """
