@@ -13,15 +13,17 @@ def num_hours()-> float:
     total =days*hours
     return days*hours
 
-num_hours()
+
 
 def move_to_index(move: str) -> tuple[int,int]:
+    """ Takes move from Alphanumeric to plain numerical indexing in doing so it takes arguments of string type
+    and returns tuple
+      example:   'A2' ----->   (0,3)               """
     mov_index =()
     if 64 < ord(move[0]) < 91:
         index1 =int(ord(move[0])- ord('A'))
         index2 = int(move[1:]) - 1
         mov_index =(index1,index2)
-        print(mov_index)
         return mov_index
     else :
         print('Need capital letter')
@@ -58,6 +60,7 @@ def generate_initial_board() -> list[list[str]]:
 
 
 def check_winner(board: list[list[str]]) -> str:
+    """ Function returns winner of the game board according to reversi logic where who has most pieces wins."""
     x_count = 0
     o_count = 0
 
@@ -79,30 +82,31 @@ def check_winner(board: list[list[str]]) -> str:
 
 
 def get_intermediate_locations(position: tuple[int, int], new_position: tuple[int, int]) -> list[tuple[int, int]]:
-    """ generates intermediate positions between 2 chosen positions"""
+    """ generates intermediate positions between 2 chosen positions,either vertical,horizontal or diagonal """
     intermediates = []
-    """Generates intermediate positions between 2 chosen positions, either vertical, horizontal or diagonal."""
 
-    # Check vertical movement (same column)
+
+    # Check if both  positions are in same column(Vertical)
     if position[1] == new_position[1]:
         step = 1 if new_position[0] > position[0] else -1
         for x in range(position[0] + step, new_position[0], step):
             intermediates.append((x, position[1]))
         return intermediates
 
-    # Check horizontal movement (same row)
+    # Check if positions are in same row (Horizontal)
     if position[0] == new_position[0]:
         step = 1 if new_position[1] > position[1] else -1
         for y in range(position[1] + step, new_position[1], step):
             intermediates.append((position[0], y))
         return intermediates
 
-    # Diagonal movement utilizing smaller subsection of the matrix
+    # Need to now check diagonals
+    # Method used creates all diagonals of smallest submatrix that has both position and new_position inside
+    # and then checks if both new_position and position are within any diagonals.
     min_row = min(position[0], new_position[0])
     max_row = max(position[0], new_position[0])
     min_col = min(position[1], new_position[1])
     max_col = max(position[1], new_position[1])
-    submatrix_size = max(max_row - min_row, max_col - min_col) + 1
 
     diagonals = []
 
@@ -156,7 +160,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
         if diagonal:
             diagonals.append(diagonal)
 
-    # Check all diagonals for containing both positions
+    # Checks all diagonals for having both positions
     for diagonal in diagonals:
         if position in diagonal and new_position in diagonal:
             index1 = diagonal.index(position)
@@ -169,6 +173,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
 
 def display_board(board: list[list[str]]):
     """Prints game board graphically"""
+
     rows = len(board)
     cols = len(board[0])
 
@@ -184,11 +189,12 @@ def display_board(board: list[list[str]]):
         cells = "".join(board[i])
         print(f"{chr(ord('A') + i)}|{cells}|")
 
-    # Print bottom border
+    # Print bottom
     print("  "+ HORIZONTAL_SEPARATOR * (cols ))
 
 def get_valid_command(valid_moves: list[str]) -> str:
-    """ Returns all valid moves """
+    """ Prompts user for a valid move whereby valid moves include extended list of ['Q','q','H','h' """
+
     while True:  # Keep repeating until command satisfied
         val = input(MOVE_PROMPT).upper()
         updated_valid_moves =valid_moves.copy()
@@ -199,21 +205,24 @@ def get_valid_command(valid_moves: list[str]) -> str:
 
 def get_reversed_positions(board: list[list[str]], piece: str, position: tuple[int, int]) -> list[tuple[int, int]]:
     """Returns positions that would be reversed by placing piece at position.
-    Utilizes get_intermediate_locations to fill in the needed positions to flip."""
+    Utilizes get_intermediate_locations to fill in the needed positions to flip.
+    Args:
+        board: List[list[str]] representing  game board.
+        piece: The piece being placed .
+        position: (row, column) coordinates where the piece is placed.
+
+    Returns:
+        [(row,column)] positions that would be flipped if the piece is placed"""
     x, y = position
     size = len(board)
 
-
-
-
     opponent = 'O' if piece == 'X' else 'X'
     reversed_positions = []
-
-    # Check all directions
+    # Code utilizes idea of a sandwich, whereby it searches for player 2s pieces sandwiched between player 1s pieces
+    # Checking all directions
     directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
     for dx, dy in directions:
-        # Find endpoint
         i, j = x + dx, y + dy
 
         if not (0 <= i < size and 0 <= j < size and board[i][j] == opponent):
@@ -247,7 +256,7 @@ def get_available_moves(board: list[list[str]], player: str) -> list[str]:
                 # Need to test wether placing at [i][j] would flip any opponents pieces
                 if get_reversed_positions(board, player, (i, j)):
                     valid_moves.append(index_to_move((i, j)))
-    print(sorted(valid_moves))
+
     return sorted(valid_moves)
 
 def make_move(board: list[list[str]], piece: str, move: str):
@@ -257,15 +266,78 @@ def make_move(board: list[list[str]], piece: str, move: str):
     display_board(board)     # Need to possibly move this function ahead of display function
 
 
+def play_a_game():
+    """Function to play game of Reversi using all the implemented functions."""
+    # Initialize game
+    board = generate_initial_board()
+    current_player = 'X'
+    game_over = False
+
+    print(WELCOME_MESSAGE)
+    print(HELP_MESSAGE)
+    print(MOVE_PROMPT)
+
+    while not game_over:
+        # Display current board state
+        display_board(board)
+
+        # Get available moves for current player
+        valid_moves = get_available_moves(board, current_player)
+
+        # Check for game end conditions
+        if not valid_moves:
+            other_player = 'O' if current_player == 'X' else 'X'
+            other_moves = get_available_moves(board, other_player)
+
+            if not other_moves:  # Neither player can move
+                game_over = True
+                break
+
+            print(f"{current_player} has no valid moves. Passing turn to {other_player}.")
+            current_player = other_player
+            continue
+
+        # Get player move
+        print(f"\nPlayer {current_player}'s turn")
+        print(f"Available moves: {', '.join(valid_moves)}")
+        command = get_valid_command(valid_moves)
+
+        # Handle special commands
+        if command == 'Q':
+            print("PLAYER quit game.")
+            return
+        elif command == 'H':
+            print(HELP_MESSAGE)
+            continue
+
+        # Make the move
+        position = move_to_index(command)
+        reversed_positions = get_reversed_positions(board, current_player, position)
+
+        # Place the piece and flip opponents pieces
+        board[position[0]][position[1]] = current_player
+        for (x, y) in reversed_positions:
+            board[x][y] = current_player
+
+        # Alternate players
+        current_player = 'O' if current_player == 'X' else 'X'
+
+    # Game over - determine winner
+    display_board(board)
+    winner = check_winner(board)
+    if winner:
+        print(f"\nGame over! Player {winner} wins!")
+    else:
+        print(DRAW_TEXT)
+        print(PLAY_AGAIN_PROMPT)
+
+
+play_a_game()
 
 
 
 
-board =generate_initial_board()
-get_intermediate_locations((1,0),(3,2))
-display_board(board)
-get_reversed_positions(board , 'O',(4,2))
-make_move(board, "O", "D3")
+
 def main() -> None:
     """
     The main function (You should write a better docstring!)
