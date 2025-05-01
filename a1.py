@@ -40,7 +40,6 @@ def generate_empty_board(size: int) -> list[list[str]]:
     """ produces square board with dimensions size(intiger) and fills square with string values of empty board
     corresponding with lower case 'x'. """
     a = [[EMPTY for _ in range(size)] for _ in range(size)]
-    print(a)
     return a
 
 
@@ -166,7 +165,6 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
             index1 = diagonal.index(position)
             index2 = diagonal.index(new_position)
             start, end = min(index1, index2), max(index1, index2)
-            print(diagonal[start +1:end])
             return diagonal[start + 1:end]
 
     return []
@@ -193,7 +191,7 @@ def display_board(board: list[list[str]]):
     print("  "+ HORIZONTAL_SEPARATOR * (cols ))
 
 def get_valid_command(valid_moves: list[str]) -> str:
-    """ Prompts user for a valid move whereby valid moves include extended list of ['Q','q','H','h' """
+    """ Prompts user for a valid move whereby valid moves include extended list of ['Q','q','H','h'] """
 
     while True:  # Keep repeating until command satisfied
         val = input(MOVE_PROMPT).upper()
@@ -279,14 +277,12 @@ def make_move(board: list[list[str]], piece: str, move: str):
 
 def play_game():
     """Function to play game of Reversi using all the implemented functions."""
-    # Initialize game
+    # Initialize game (Player 1 starts as 'O', Player 2 is 'X')
     board = generate_initial_board()
-    current_player = 'X'
+    current_player = 'O'  # Player 1 starts
     game_over = False
 
     print(WELCOME_MESSAGE)
-    print(HELP_MESSAGE)
-    print(MOVE_PROMPT)
 
     while not game_over:
         # Display current board state
@@ -297,25 +293,28 @@ def play_game():
 
         # Check for game end conditions
         if not valid_moves:
-            other_player = 'O' if current_player == 'X' else 'X'
+            other_player = 'X' if current_player == 'O' else 'O'
             other_moves = get_available_moves(board, other_player)
 
             if not other_moves:  # Neither player can move
                 game_over = True
                 break
 
-            print(f"{current_player} has no valid moves. Passing turn to {other_player}.")
+            player_name = "Player 1" if current_player == 'O' else "Player 2"
+            next_player_name = "Player 1" if other_player == 'O' else "Player 2"
+            print(f"{player_name} has no valid moves. Passing turn to {next_player_name}.")
             current_player = other_player
             continue
 
         # Get player move
-        print(f"\nPlayer {current_player}'s turn")
-        print(f"Available moves: {', '.join(valid_moves)}")
+        player_name = "Player 1" if current_player == 'O' else "Player 2"
+        print(f"\n{player_name} to move")
+        print(f"Possible moves: {', '.join(valid_moves)}")
         command = get_valid_command(valid_moves)
 
         # Handle special commands
         if command == 'Q':
-            print("PLAYER quit game.")
+            print(f"{player_name} quit the game.")
             return
         elif command == 'H':
             print(HELP_MESSAGE)
@@ -325,19 +324,21 @@ def play_game():
         position = move_to_index(command)
         reversed_positions = get_reversed_positions(board, current_player, position)
 
-        # Place the piece and flip opponents pieces
+        # Place the piece and flip opponents' pieces
         board[position[0]][position[1]] = current_player
         for (x, y) in reversed_positions:
             board[x][y] = current_player
 
-        # Alternate players
-        current_player = 'O' if current_player == 'X' else 'X'
+        # Switch players
+        current_player = 'X' if current_player == 'O' else 'O'
 
-    # Game over - determine winner
+    # Game over - check winner
     display_board(board)
     winner = check_winner(board)
-    if winner:
-        print(f"\nGame over! Player {winner} wins!")
+    if winner == 'O':
+        print("\nGame over! Player 1 wins!")
+    elif winner == 'X':
+        print("\nGame over! Player 2 wins!")
     else:
         print(DRAW_TEXT)
         print(PLAY_AGAIN_PROMPT)
@@ -346,6 +347,8 @@ def play_game():
 
 
 
+
+play_game()
 
 
 def main() -> None:
