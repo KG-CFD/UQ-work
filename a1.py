@@ -346,10 +346,21 @@ def play_game():
 
 
 def main() -> None:
-    """
-    The main function (You should write a better docstring!)
-    """
-    pass
+    """Runs the game and handles replay functionality
+     1. Calls to play game
+     2 At end of game prompts player/s to play again
+     3 Plays another round or exits when player declines"""
+
+    print(WELCOME_MESSAGE)
+
+    while True:
+        play_game()
+
+        print(PLAY_AGAIN_PROMPT, end='')
+        if input().strip().upper() != 'Y':
+            print("Thanks for playing!")
+            break
+
 
 if __name__ == "__main__":
     main()
