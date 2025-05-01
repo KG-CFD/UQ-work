@@ -272,52 +272,48 @@ def make_move(board: list[list[str]], piece: str, move: str):
     for (i, j) in positions_to_flip:
         board[i][j] = piece
 
-    display_board(board)  #Display the updated board
+
 
 
 def play_game():
-    """Function to play game of Reversi using all the implemented functions."""
-    # Initialize game (Player 1 starts as 'O', Player 2 is 'X')
+    """Function to play game of Reversi with exact output formatting."""
+    # Initialize game
     board = generate_initial_board()
     current_player = 'O'  # Player 1
     game_over = False
-    pass_count = 0  # Track consecutive passes
+    pass_count = 0
 
     print(WELCOME_MESSAGE)
 
     while not game_over:
-        # Display current board state
+        # Display board first (matches expected format)
         display_board(board)
 
-        # Get available moves for current player
-        valid_moves = get_available_moves(board, current_player)
+        # Then print whose turn it is
         player_name = "Player 1" if current_player == 'O' else "Player 2"
-
-        # Print whose turn it is
         print(f"{player_name} to move")
 
-        # Check for no valid moves
+        # Get available moves
+        valid_moves = get_available_moves(board, current_player)
+
+        # Handle no valid moves case
         if not valid_moves:
             print(f"{player_name} has no possible move!")
             pass_count += 1
 
-            # Check if game should end (both players passed consecutively)
             if pass_count >= 2:
                 game_over = True
                 break
 
-            # Switch to other player
             current_player = 'X' if current_player == 'O' else 'O'
             continue
 
-        # Reset pass count if current player has moves
         pass_count = 0
 
-        # Get player move
+        # Get and process move
         print(f"Possible moves: {', '.join(valid_moves)}")
         command = get_valid_command(valid_moves)
 
-        # Handle special commands
         if command == 'Q':
             print(f"{player_name} quit the game.")
             return
@@ -328,17 +324,13 @@ def play_game():
         # Make the move
         position = move_to_index(command)
         reversed_positions = get_reversed_positions(board, current_player, position)
-
-        # Place  piece and flip opponents' pieces
         board[position[0]][position[1]] = current_player
         for (x, y) in reversed_positions:
             board[x][y] = current_player
 
-        # Switch players
         current_player = 'X' if current_player == 'O' else 'O'
 
-    # Check who won
-    display_board(board)
+    # Game over - determine winner (without showing board again)
     winner = check_winner(board)
     if winner == 'O':
         print("Player 1 Wins!")
