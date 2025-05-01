@@ -345,7 +345,7 @@ def play_a_game():
 
 
 
-play_a_game()
+
 
 
 def main() -> None:
