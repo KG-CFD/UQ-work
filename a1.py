@@ -277,7 +277,7 @@ def make_move(board: list[list[str]], piece: str, move: str):
     display_board(board)  #Display the updated board
 
 
-def play_a_game():
+def play_game():
     """Function to play game of Reversi using all the implemented functions."""
     # Initialize game
     board = generate_initial_board()
