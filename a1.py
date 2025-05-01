@@ -279,8 +279,9 @@ def play_game():
     """Function to play game of Reversi using all the implemented functions."""
     # Initialize game (Player 1 starts as 'O', Player 2 is 'X')
     board = generate_initial_board()
-    current_player = 'O'  # Player 1 starts
+    current_player = 'O'  # Player 1
     game_over = False
+    pass_count = 0  # Track consecutive passes
 
     print(WELCOME_MESSAGE)
 
@@ -290,25 +291,29 @@ def play_game():
 
         # Get available moves for current player
         valid_moves = get_available_moves(board, current_player)
+        player_name = "Player 1" if current_player == 'O' else "Player 2"
 
-        # Check for game end conditions
+        # Print whose turn it is
+        print(f"{player_name} to move")
+
+        # Check for no valid moves
         if not valid_moves:
-            other_player = 'X' if current_player == 'O' else 'O'
-            other_moves = get_available_moves(board, other_player)
+            print(f"{player_name} has no possible move!")
+            pass_count += 1
 
-            if not other_moves:  # Neither player can move
+            # Check if game should end (both players passed consecutively)
+            if pass_count >= 2:
                 game_over = True
                 break
 
-            player_name = "Player 1" if current_player == 'O' else "Player 2"
-            next_player_name = "Player 1" if other_player == 'O' else "Player 2"
-            print(f"{player_name} has no valid moves. Passing turn to {next_player_name}.")
-            current_player = other_player
+            # Switch to other player
+            current_player = 'X' if current_player == 'O' else 'O'
             continue
 
+        # Reset pass count if current player has moves
+        pass_count = 0
+
         # Get player move
-        player_name = "Player 1" if current_player == 'O' else "Player 2"
-        print(f"\n{player_name} to move")
         print(f"Possible moves: {', '.join(valid_moves)}")
         command = get_valid_command(valid_moves)
 
@@ -332,13 +337,13 @@ def play_game():
         # Switch players
         current_player = 'X' if current_player == 'O' else 'O'
 
-    # Game over - check winner
+    # Game over - determine winner
     display_board(board)
     winner = check_winner(board)
     if winner == 'O':
-        print("\nGame over! Player 1 wins!")
+        print("Player 1 Wins!")
     elif winner == 'X':
-        print("\nGame over! Player 2 wins!")
+        print("Player 2 Wins!")
     else:
         print(DRAW_TEXT)
         print(PLAY_AGAIN_PROMPT)
@@ -346,6 +351,7 @@ def play_game():
 
 
 
+play_game()
 
 
 def main() -> None:
