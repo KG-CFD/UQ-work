@@ -71,10 +71,8 @@ def check_winner(board: list[list[str]]) -> str:
                 o_count += 1
 
     if x_count > o_count:
-        print('x')
         return 'X'
     elif o_count > x_count:
-        print('O')
         return 'O'
     else:
         return ""
@@ -286,10 +284,10 @@ def play_game():
     print(WELCOME_MESSAGE)
 
     while not game_over:
-        # Display board first (matches expected format)
+        # Display board
         display_board(board)
 
-        # Then print whose turn it is
+        # Print whose turn it is
         player_name = "Player 1" if current_player == 'O' else "Player 2"
         print(f"{player_name} to move")
 
