@@ -329,7 +329,7 @@ def play_game():
         position = move_to_index(command)
         reversed_positions = get_reversed_positions(board, current_player, position)
 
-        # Place the piece and flip opponents' pieces
+        # Place  piece and flip opponents' pieces
         board[position[0]][position[1]] = current_player
         for (x, y) in reversed_positions:
             board[x][y] = current_player
@@ -337,7 +337,7 @@ def play_game():
         # Switch players
         current_player = 'X' if current_player == 'O' else 'O'
 
-    # Game over - determine winner
+    # Check who won
     display_board(board)
     winner = check_winner(board)
     if winner == 'O':
