@@ -351,8 +351,6 @@ def main() -> None:
      2 At end of game prompts player/s to play again
      3 Plays another round or exits when player declines"""
 
-    print(WELCOME_MESSAGE)
-
     while True:
         play_game()
 
