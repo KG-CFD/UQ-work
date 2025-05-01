@@ -309,7 +309,7 @@ def play_game():
         pass_count = 0
 
         # Get and process move
-        print(f"Possible moves: {', '.join(valid_moves)}")
+        print(f"Possible moves: {','.join(valid_moves)}")
         command = get_valid_command(valid_moves)
 
         if command == 'Q':
