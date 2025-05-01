@@ -332,7 +332,6 @@ def play_a_game():
         print(PLAY_AGAIN_PROMPT)
 
 
-play_a_game()
 
 
 
