@@ -313,8 +313,8 @@ def play_game():
         command = get_valid_command(valid_moves)
 
         if command == 'Q':
-            print(f"{player_name} quit the game.")
-            return
+            winning_player = "Player 1" if current_player == 'X' else "Player 2"
+            print(f"{winning_player} Wins!")
         elif command == 'H':
             print(HELP_MESSAGE)
             continue
@@ -341,6 +341,7 @@ def play_game():
 
 
 
+play_game()
 
 
 
