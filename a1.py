@@ -348,9 +348,6 @@ def play_game():
 
 
 
-play_game()
-
-
 def main() -> None:
     """
     The main function (You should write a better docstring!)
