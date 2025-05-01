@@ -260,10 +260,21 @@ def get_available_moves(board: list[list[str]], player: str) -> list[str]:
     return sorted(valid_moves)
 
 def make_move(board: list[list[str]], piece: str, move: str):
-    """updates board with the new piece placement  """
+    """Updates board with the new piece placement,flipping the required pieces if sandwiched pieces exist  """
+
     position = move_to_index(move)
-    board[position[0]][position[1]] = str(piece)
-    display_board(board)     # Need to possibly move this function ahead of display function
+    x, y = position
+    board[x][y] = piece  # Place the piece
+
+    # Get all opponent pieces to flip
+    opponent = 'O' if piece == 'X' else 'X'
+    positions_to_flip = get_reversed_positions(board, piece, position)
+
+    # Flip all sandwiched opponent pieces to the current player's color
+    for (i, j) in positions_to_flip:
+        board[i][j] = piece
+
+    display_board(board)  #Display the updated board
 
 
 def play_a_game():
@@ -334,7 +345,7 @@ def play_a_game():
 
 
 
-
+play_a_game()
 
 
 def main() -> None:
