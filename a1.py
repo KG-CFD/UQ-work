@@ -8,8 +8,8 @@ from support import *
 
 # Define your functions here (start with def num_hours() -> float)
 def num_hours()-> float:
-    days =10
-    hours =2.5
+    days =15
+    hours =1.3
     total =days*hours
     return days*hours
 
@@ -50,7 +50,7 @@ def generate_initial_board() -> list[list[str]]:
     board = generate_empty_board(BOARD_SIZE)  # calls earlier function
 
 
-    board[3][3] = 'O' # fills board postion row 3,column 3 with 'O'
+    board[3][3] = 'O'
     board[3][4] = 'X'
     board[4][3] = 'X'
     board[4][4] = 'O'
@@ -108,7 +108,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
     diagonals = []
 
     # Main diagonals (top-left to bottom-right)
-    # Diagonals starting from left edge
+    # Diagonals starting from  bottom left edge
     for d in range(max_col - min_col + 1):
         diagonal = []
         i = min_row
@@ -117,10 +117,10 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
             diagonal.append((i, j))
             i += 1
             j += 1
-        if diagonal:  # Only add if not empty
+        if diagonal:
             diagonals.append(diagonal)
 
-    # Diagonals starting from top edge (skip first to avoid duplicate)
+    # Diagonals starting from top edge
     for d in range(1, max_row - min_row + 1):
         diagonal = []
         i = min_row + d
@@ -132,7 +132,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
         if diagonal:
             diagonals.append(diagonal)
 
-    # Anti-diagonals (top-right to bottom-left)
+    # Anti-diagonals
     # Diagonals starting from right edge
     for d in range(max_col - min_col + 1):
         diagonal = []
@@ -145,7 +145,7 @@ def get_intermediate_locations(position: tuple[int, int], new_position: tuple[in
         if diagonal:
             diagonals.append(diagonal)
 
-    # Diagonals starting from top edge (skip first to avoid duplicate)
+    # Diagonals starting from top edge
     for d in range(1, max_row - min_row + 1):
         diagonal = []
         i = min_row + d
@@ -294,7 +294,6 @@ def play_game():
         # Get available moves
         valid_moves = get_available_moves(board, current_player)
 
-        # Handle no valid moves case
         if not valid_moves:
             print(f"{player_name} has no possible move!")
             pass_count += 1
@@ -328,7 +327,7 @@ def play_game():
 
         current_player = 'X' if current_player == 'O' else 'O'
 
-    # Game over - determine winner (without showing board again)
+    # Game over - determine winner
     winner = check_winner(board)
     if winner == 'O':
         print("Player 1 Wins!")
@@ -356,7 +355,7 @@ def main() -> None:
 
         print(PLAY_AGAIN_PROMPT, end='')
         if input().strip().upper() != 'Y':
-            print("Thanks for playing!")
+            print("Cheers for playing!")
             break
 
 
