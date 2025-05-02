@@ -8,6 +8,7 @@ from support import *
 
 # Define your functions here (start with def num_hours() -> float)
 def num_hours()-> float:
+    """Simply returns number of hours spent working on reversi as a float """
     days =15
     hours =1.3
     total =days*hours
