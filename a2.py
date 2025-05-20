@@ -20,6 +20,8 @@ class Card():
     def __str__(self):
         return f"{self._name}:{self._description}"
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}"
     def get_symbol(self) -> str:
         return self._symbol
 
@@ -81,17 +83,42 @@ class Fireball(Card):
 
 
 class CardDeck():
-     def _init__(self, cards: list[Card]):
+    def __init__(self, cards: list[Card]):
+        """Initialize the deck """
+        self._cards = list(cards)  # Create a copy to avoid modifying the original list
 
+    def __str__(self) -> str:
 
+        return ",".join(card.get_symbol() for card in self._cards)
 
+    def __repr__(self) -> str:
+        """Return reconstructable string representation."""
+        card_reprs = [f"{card.__class__.__name__}()" for card in self._cards]
+        return f"CardDeck([{', '.join(card_reprs)}])"
 
+    def is_empty(self):
+        if len(self._cards) > 0:
+            return False
+        else:
+            return True
 
+    def remaining_count(self) -> int:
+        return len(self._cards)
 
+    def draw_cards(self, num: int) -> list[Card]:
+        """
+        Draws the specified number of cards from the top of the deck.
+        Returns cards in the order they were drawn.
+        If there aren't enough cards, returns as many as possible.
+        """
+        drawn = []
+        for _ in range(min(num, self.remaining_count())):
+            drawn.append(self._cards.pop(0))
+        return drawn
 
-
-
-
+    def add_card(self, card: Card):
+        """Add a card to the bottom of the deck."""
+        self._cards.append(card)
 def main() -> None:
     pass
 
