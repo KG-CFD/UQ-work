@@ -85,7 +85,7 @@ class Fireball(Card):
 class CardDeck():
     def __init__(self, cards: list[Card]):
         """Initialize the deck """
-        self._cards = list(cards)  # Create a copy to avoid modifying the original list
+        self._cards = list(cards)  # Create a
 
     def __str__(self) -> str:
 
@@ -119,6 +119,103 @@ class CardDeck():
     def add_card(self, card: Card):
         """Add a card to the bottom of the deck."""
         self._cards.append(card)
+
+#Task 6 -- Entity class creation
+class Entity():
+    def __init__(self, health: int, shield: int):
+        self._health = health
+        self._shield = shield
+
+    def __str__(self) -> str:
+        return f'{self._health}, {self._shield}'
+    def get_health(self):
+        return self._health
+    def get_shield(self):
+        return self._shield
+
+    def apply_shield(self,shield):
+        self._shield = self.get_shield() + shield
+
+    def apply_health(self, health: int):
+        self._health = self.get_health() + health
+
+    def apply_damage(self, damage: int):
+        dam_list = [1 for _ in range(damage)]
+        for i in dam_list:
+            if self._shield > 0:
+                self._shield += -i
+            elif self._health > 0:
+                self._health += -i
+            else:
+                self._health ==0
+                break
+
+    def is_alive(self) -> bool:
+        if self._health > 0:
+             return True
+        else:
+            return False
+
+class Hero(Entity):
+    def __init__(self, health: int, shield: int, max_energy: int, deck: CardDeck, hand: list[Card]):
+        super().__init__(health,shield)
+        self._health = health
+        self._shield = shield
+        self._max_energy = max_energy
+        self._current_energy = max_energy
+        self._deck = deck
+        self._hand = hand
+
+    def __str__(self) -> str:
+        return (
+            f"{self.get_health()},{self.get_shield()},"
+            f"{self.get_energy()}; "
+            f"{','.join(c.get_symbol() for c in self._hand)}; "
+            f"{str(self._deck)}"
+        )
+
+
+    def get_energy(self):
+        return self._current_energy
+
+
+    def spend_energy(self, energy: int) -> bool:
+        if self._current_energy >= energy:
+            self._current_energy -= energy
+            return True
+        return False
+
+    def get_max_energy(self) -> int:
+        return self._max_energy
+
+    def get_deck(self) -> CardDeck:
+        return self._deck
+
+    def get_hand(self) -> list[Card]:
+        return self._hand
+
+    def new_turn(self):
+        for card in self._hand:
+            if isinstance(card, Fireball):
+                card.increment_turn()
+
+            # 2. Draw a card from the deck
+        drawn_cards = self._deck.draw_cards(1)
+        if drawn_cards:
+            self._hand.extend(drawn_cards)
+
+        # 3. Expand energy capacity by 1 (capped at 10)
+        if self._max_energy < 10:
+            self._max_energy += 1
+
+        # 4. Refill energy to max
+        self._current_energy = self._max_energy
+
+
+
+
+
+
 def main() -> None:
     pass
 
