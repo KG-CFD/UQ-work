@@ -10,13 +10,14 @@
 # Define your classes and functions here
 
 class Card():
-    def __init__(self,**kwargs):
-        self._name = 'Card'
-        self._symbol ='C'
-        self._description ="A card."
-        self._cost = 1
-        self._permanent = False
-        self._effect = {}
+    def __init__(self, **kwargs):
+        self._name = kwargs.get('name', 'Card')
+        self._symbol = kwargs.get('symbol', 'C')
+        self._description = kwargs.get('description', 'A card.')
+        self._cost = kwargs.get('cost', 1)
+        self._permanent = kwargs.get('permanent', False)
+        self._effect = kwargs.get('effect', {})
+
     def __str__(self):
         return f"{self._name}:{self._description}"
 
@@ -211,6 +212,39 @@ class Hero(Entity):
         # 4. Refill energy to max
         self._current_energy = self._max_energy
 
+
+
+class Minion(Card, Entity):
+
+    def __init__(self, health: int, shield: int, **kwargs):
+        Card.__init__(self, **kwargs)
+        Entity.__init__(self, health, shield)
+
+        self._name = kwargs.get('name', 'Minion')
+        self._symbol = kwargs.get('symbol', 'M')
+        self._cost = kwargs.get('cost', 2)
+        self._description = f"{self._name}: Summon a minion."
+        self._permanent = True
+        self._effect = kwargs.get('effect', {})
+
+        """self._name = 'Minion'
+        self._permanent = True
+        self._cost =2
+        self._strength = 0
+        self._symbol ='M'
+        self._description = f"{self._name}: Summon a {self._name} "
+        self._effect ={}"""
+
+
+    def __str__(self) -> str:
+        return Card.__str__(self)
+
+
+
+
+    def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity], enemy_minions: list[Entity]) -> Entity:
+
+        return enemy_hero
 
 
 
