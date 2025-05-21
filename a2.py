@@ -19,7 +19,7 @@ class Card():
         self._effect = kwargs.get('effect', {})
 
     def __str__(self):
-        return f"{self._name}:{self._description}"
+        return f"{self._name}: {self._description}"
 
     def __repr__(self):
         return f"{self.__class__.__name__}"
@@ -129,6 +129,9 @@ class Entity():
 
     def __str__(self) -> str:
         return f'{self._health}, {self._shield}'
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self._health}, {self._shield})"
     def get_health(self):
         return self._health
     def get_shield(self):
@@ -223,7 +226,7 @@ class Minion(Card, Entity):
         self._name = kwargs.get('name', 'Minion')
         self._symbol = kwargs.get('symbol', 'M')
         self._cost = kwargs.get('cost', 2)
-        self._description = f"{self._name}: Summon a minion."
+        self._description = "Summon a minion."
         self._permanent = True
         self._effect = kwargs.get('effect', {})
 
@@ -239,7 +242,8 @@ class Minion(Card, Entity):
     def __str__(self) -> str:
         return Card.__str__(self)
 
-
+    def __repr__(self):
+        return Entity.__repr__(self)
 
 
     def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity], enemy_minions: list[Entity]) -> Entity:
