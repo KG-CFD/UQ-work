@@ -273,8 +273,20 @@ class Minion(Card, Entity):
 
  # Task 9!
 class Wyrm(Minion):
-    pass
+    def __init__(self,health, shield, **kwargs):
+        super().__init__(health, shield,**kwargs)
+        self._name = "Mana"
+        self._symbol = "W"
+        self._strength = {}
+        self._cost = 2
+        self._shield = health
+        self._health = shield
+        self._description = f"{self.__class__.__name__}: Summon a {self._name} {self.__class__.__name__} to buff your minions."
+        self._permanent = True
+        self._effect = {"health": 1, "shield": 1 }
 
+    def __str__(self):
+        return self._description
 
 
 
