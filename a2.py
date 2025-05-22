@@ -225,14 +225,18 @@ class Hero(Entity):
         if drawn_cards:
             self._hand.extend(drawn_cards)
 
-        # 3. Expand energy capacity by 1 (capped at 10)
+
         if self._max_energy < 10:
             self._max_energy += 1
 
-        # 4. Refill energy to max
+
         self._current_energy = self._max_energy
 
-
+    def is_alive(self) -> bool:
+        if self._health > 0 and len(self._deck) >0:
+             return True
+        else:
+            return False
 
 class Minion(Card, Entity):
 
