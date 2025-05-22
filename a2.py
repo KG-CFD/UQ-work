@@ -220,10 +220,10 @@ class Hero(Entity):
             if isinstance(card, Fireball):
                 card.increment_turn()
 
-            # 2. Draw a card from the deck
-        drawn_cards = self._deck.draw_cards(1)
-        if drawn_cards:
-            self._hand.extend(drawn_cards)
+        while len(self._hand) <5:
+            drawn_cards = self._deck.draw_cards(1)
+            if drawn_cards:
+                self._hand.extend(drawn_cards)
 
 
         if self._max_energy < 10:
