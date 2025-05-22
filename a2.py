@@ -76,14 +76,14 @@ class Fireball(Card):
     def _update_attributes(self):
         self._strength = 3 + self._turns
         self._symbol = str(self._turns)
-        self._description = f" Deals 3 + [turns in hand] damage. Currently dealing {self._strength} damage."
+        self._description = f"{self._name.upper()}! Deals 3 + [turns in hand] damage. Currently dealing {self._strength} damage."
         self._effect = {"damage": self._strength}
     def increment_turn(self):
         self._turns += 1
         self._update_attributes()
 
     def __repr__(self):
-        return f" {self.__class__.__name__}({self._turns})"
+        return f"{self.__class__.__name__}({self._turns})"
 
 
 class CardDeck():
