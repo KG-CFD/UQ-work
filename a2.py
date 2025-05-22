@@ -269,7 +269,7 @@ class Minion(Card, Entity):
 
     def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity], enemy_minions: list[Entity]) -> Entity:
 
-        pass
+        return self
 
  # Task 9!
 class Wyrm(Minion):
