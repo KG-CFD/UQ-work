@@ -136,7 +136,7 @@ class Entity():
         self._shield = shield
 
     def __str__(self) -> str:
-        return f'{self._health}, {self._shield}'
+        return f'{self._health},{self._shield}'
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._health}, {self._shield})"
