@@ -44,7 +44,7 @@ class Shield(Card):
         self._symbol = "S"
         self._strength = 5
         self._cost = 1
-        self._description = f" Cast a protective shield that can absorb {self._strength} damage. "
+        self._description = f"Cast a protective shield that can absorb {self._strength} damage."
         self._permanent = False
         self._effect = {"shield": self._strength}
 
