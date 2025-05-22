@@ -181,9 +181,9 @@ class Hero(Entity):
     def __str__(self) -> str:
         return (
             f"{self.get_health()},{self.get_shield()},"
-            f"{self.get_energy()}; "
-            f"{','.join(c.get_symbol() for c in self._hand)}; "
-            f"{str(self._deck)}"
+            f"{self.get_energy()};"
+            f"{str(self._deck)};"
+            f"{','.join(c.get_symbol() for c in self._hand)}"
         )
 
     def __repr__(self):
