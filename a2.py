@@ -233,7 +233,7 @@ class Hero(Entity):
         self._current_energy = self._max_energy
 
     def is_alive(self) -> bool:
-        if self._health > 0 and len(self._deck) >0:
+        if self._health > 0 and not self._deck.is_empty():
              return True
         else:
             return False
