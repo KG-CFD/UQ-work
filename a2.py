@@ -59,7 +59,7 @@ class Heal(Card):
         self._symbol = "H"
         self._strength = 2
         self._cost = 2
-        self._description = f" Cast an  aura on target. It recovers {self._strength} health."
+        self._description = f"Cast an  aura on target. It recovers {self._strength} health."
         self._permanent = False
         self._effect = {"health": self._strength}
 
