@@ -275,13 +275,13 @@ class Minion(Card, Entity):
 class Wyrm(Minion):
     def __init__(self,health, shield, **kwargs):
         super().__init__(health, shield,**kwargs)
-        self._name = "Mana"
+        self._name = "Wyrm"
         self._symbol = "W"
         self._strength = {}
         self._cost = 2
         self._shield = shield
         self._health = health
-        self._description = f"{self.__class__.__name__}: Summon a {self._name} {self.__class__.__name__} to buff your minions."
+        self._description = f"{self.__class__.__name__}: Summon a Mana {self.__class__.__name__} to buff your minions."
         self._permanent = True
         self._effect = {"health": 1, "shield": 1 }
 
