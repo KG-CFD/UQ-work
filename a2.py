@@ -22,7 +22,7 @@ class Card():
         return f"{self._name}: {self._description}"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}"
+        return f"{self.__class__.__name__}()"
     def get_symbol(self) -> str:
         return self._symbol
 
@@ -46,7 +46,7 @@ class Shield(Card):
         self._cost = 1
         self._description = f" Cast a protective shield that can absorb {self._strength} damage. "
         self._permanent = False
-        self._effect = {"defense": self._strength}
+        self._effect = {"shield": self._strength}
 
 
 
@@ -82,11 +82,14 @@ class Fireball(Card):
         self._turns += 1
         self._update_attributes()
 
+    def __repr__(self):
+        return f" {self.__class__.__name__}({self._turns})"
+
 
 class CardDeck():
     def __init__(self, cards: list[Card]):
         """Initialize the deck """
-        self._cards = list(cards)  # Create a
+        self._cards = list(cards)
 
     def __str__(self) -> str:
 
@@ -94,9 +97,14 @@ class CardDeck():
 
     def __repr__(self) -> str:
         """Return reconstructable string representation."""
-        card_reprs = [f"{card.__class__.__name__}()" for card in self._cards]
-        return f"CardDeck([{', '.join(card_reprs)}])"
+        card_rep =[]
+        for card in self._cards:
+            if isinstance(card, Fireball):
+                card_rep.append(f"{card.__class__.__name__}({card._turns})")
 
+            else:
+                card_rep.append(f"{card.__class__.__name__}()")
+        return f"CardDeck([{', '.join(card_rep)}])"
     def is_empty(self):
         if len(self._cards) > 0:
             return False
@@ -178,6 +186,15 @@ class Hero(Entity):
             f"{str(self._deck)}"
         )
 
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"{self._health}, "
+            f"{self._shield}, "
+            f"{self._max_energy}, "
+            f"{repr(self._deck)}, "
+            f"{repr(self._hand)})"
+        )
 
     def get_energy(self):
         return self._current_energy
@@ -248,8 +265,11 @@ class Minion(Card, Entity):
 
     def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity], enemy_minions: list[Entity]) -> Entity:
 
-        return enemy_hero
+        pass
 
+ # Task 9!
+class Wyrm(Minion):
+    pass
 
 
 
