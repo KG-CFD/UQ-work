@@ -288,7 +288,26 @@ class Wyrm(Minion):
     def __str__(self):
         return self._description
 
+    def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity],
+                      enemy_minions: list[Entity]) -> Entity:
+        # Need to return ally_hero or ally_minion  with lowest health
+        potential_targets = [ally_hero] + ally_minions
 
+        # Find minimum health value among targets
+        min_health = min(target.get_health() for target in potential_targets)
+
+        # Get all targets with minimum health
+        min_health_targets = [target for target in potential_targets
+                              if target.get_health() == min_health]
+
+        # Apply tie-breaking rules
+        if ally_hero in min_health_targets:
+            return ally_hero
+        else:
+            # Return first minion with min health (leftmost)
+            for minion in ally_minions:
+                if minion.get_health() == min_health:
+                    return minion
 
 def main() -> None:
     pass
