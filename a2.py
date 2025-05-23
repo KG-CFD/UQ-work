@@ -541,7 +541,7 @@ class HearthModel():
                     self._cleanup_defeated()
 
         return result
-
+      ##test
     def _cleanup_defeated(self):
         """Remove defeated minions and compact lists"""
         self._active_player_minions = [m for m in self._active_player_minions if m is not None and m.is_alive()]
