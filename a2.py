@@ -322,8 +322,10 @@ class Raptor(Minion):
     def apply_health(self, health: int):
         """Overring apply_health in Card class"""
         super().apply_health(health)
+        super().apply_damage(health)
         self._strength = self._health
         self._effect['damage'] = self._health  # Update damage effect
+
 
     def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity],
                       enemy_minions: list[Entity]) -> Entity:
@@ -380,6 +382,7 @@ class HearthModel():
             return False
 
 
+
     def has_lost(self) -> bool:
         return not self._player.is_alive()
 
@@ -387,15 +390,162 @@ class HearthModel():
         pass
 
     def discard_card(self, card: Card):
-        pass
+        if card in self._player.get_hand():
+            self._player.get_hand().remove(card)
+            self._player.get_deck().add_card(card)
+
+
+
+
+
+    def play_card(self, card: Card, target: Entity) -> bool:
+        player = self._player
+
+        # Check if player has enough energy and card is in hand
+        if player.get_energy() < card.get_cost() or card not in player.get_hand():
+            return False
+
+    # Spend energy
+        player.spend_energy(card.get_cost())
+
+    # Remove card from hand
+        player.get_hand().remove(card)
+
+        if card.is_permanent():
+        # Get health and shield from card's effect
+            health = card.get_effect().get('health', 1)  # Default to 1 if not specified
+            shield = card.get_effect().get('shield', 0)  # Default to 0 if not specified
+
+        # Create minion using the card's class with the specified stats
+            minion_class = card.__class__
+            minion = minion_class(health=health, shield=shield)
+
+        # Find first empty slot or add to end
+            for i in range(len(self._active_player_minions)):
+                if self._active_player_minions[i] is None:
+                    self._active_player_minions[i] = minion
+                    break
+            else:
+                self._active_player_minions.append(minion)
+
+        # Clean up defeated minions
+            self._active_player_minions = [m for m in self._active_player_minions if m is not None and m.is_alive()]
+        else:
+        # For non-permanent cards, apply effects to target
+            if target is None:
+                return False
+
+            target.apply_effects(card.get_effect())
+
+        # Clean up defeated minions if target was a minion
+            if isinstance(target, Minion) and not target.is_alive():
+                if target in self._active_player_minions:
+                    self._active_player_minions.remove(target)
+                elif target in self._active_enemy_minions:
+                    self._active_enemy_minions.remove(target)
+
+        return True
 
     def end_turn(self) -> list[str]:
-        pass
+        result = []
+
+        # 1. Player's minions activate
+        for minion in self._active_player_minions[:]:
+            if minion and minion.is_alive():
+                target = minion.choose_target(
+                    ally_hero=self._player,
+                    enemy_hero=self._enemy,
+                    ally_minions=[m for m in self._active_player_minions if m != minion],
+                    enemy_minions=self._active_enemy_minions
+                )
+                effect = minion.get_effect()
+                if 'damage' in effect:
+                    target.apply_damage(effect['damage'])
+                if 'health' in effect:
+                    target.apply_health(effect['health'])
+                if 'shield' in effect:
+                    target.apply_shield(effect['shield'])
+                self._cleanup_defeated()
+
+        # 2. Enemy turn processing
+        if self._enemy.is_alive():
+            # 2a. Enemy draws cards first
+            while len(self._enemy.get_hand()) < 5 and not self._enemy.get_deck().is_empty():
+                self._enemy.get_hand().extend(self._enemy.get_deck().draw_cards(1))
+
+            # 2b. Increment Fireball turns
+            for card in self._enemy.get_hand():
+                if isinstance(card, Fireball):
+                    card.increment_turn()
+
+            # 2c. Simple left-to-right card playing
+            played_cards = []
+            remaining_energy = self._enemy.get_energy()
+
+            for card in self._enemy.get_hand():  # Original order
+                if remaining_energy >= card.get_cost():
+                    # Get the card's full representation
+                    card_repr = repr(card)
+
+                    if card.is_permanent():
+                        if len(self._active_enemy_minions) < 7:
+                            minion = card.__class__(
+                                health=card.get_effect().get('health', 1),
+                                shield=card.get_effect().get('shield', 0)
+                            )
+                            for i in range(len(self._active_enemy_minions)):
+                                if self._active_enemy_minions[i] is None:
+                                    self._active_enemy_minions[i] = minion
+                                    break
+                            else:
+                                self._active_enemy_minions.append(minion)
+                            self._enemy.get_hand().remove(card)
+                            played_cards.append(card_repr)
+                            remaining_energy -= card.get_cost()
 
 
 
 
+                    else:
+                        # Simple targeting
+                        if 'damage' in card.get_effect():
+                            targets = [self._player] + self._active_player_minions
+                        elif 'health' in card.get_effect() or 'shield' in card.get_effect():
+                            targets = [self._enemy] + self._active_enemy_minions
+                        else:
+                            targets = []
 
+                        if targets:
+                            self.play_card(card, targets[0])
+                            played_cards.append(card_repr)
+                            remaining_energy -= card.get_cost()
+
+            result.extend(played_cards)
+
+            # 2d. Enemy minions activate
+            for minion in self._active_enemy_minions[:]:
+                if minion and minion.is_alive():
+                    target = minion.choose_target(
+                        ally_hero=self._enemy,
+                        enemy_hero=self._player,
+                        ally_minions=[m for m in self._active_enemy_minions if m != minion],
+                        enemy_minions=self._active_player_minions
+                    )
+                    effect = minion.get_effect()
+                    if 'damage' in effect:
+                        target.apply_damage(effect['damage'])
+                    if 'health' in effect:
+                        target.apply_health(effect['health'])
+                    if 'shield' in effect:
+                        target.apply_shield(effect['shield'])
+                    self._cleanup_defeated()
+
+        return result
+
+    def _cleanup_defeated(self):
+        """Remove defeated minions and compact lists"""
+        self._active_player_minions = [m for m in self._active_player_minions if m is not None and m.is_alive()]
+        self._active_enemy_minions = [m for m in self._active_enemy_minions if m is not None and m.is_alive()]
 
 
 
