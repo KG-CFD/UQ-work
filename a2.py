@@ -381,7 +381,7 @@ class HearthModel():
 
 
     def has_lost(self) -> bool:
-        return  self._player.is_alive()
+        return self._player.is_alive()
 
     def play_card(self, card: Card, target: Entity) -> bool:
         pass
