@@ -49,9 +49,6 @@ class Shield(Card):
         self._effect = {"shield": self._strength}
 
 
-
-
-
 class Heal(Card):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -300,14 +297,46 @@ class Wyrm(Minion):
         min_health_targets = [target for target in potential_targets
                               if target.get_health() == min_health]
 
-        # Apply tie-breaking rules
+
         if ally_hero in min_health_targets:
             return ally_hero
         else:
-            # Return first minion with min health (leftmost)
+
             for minion in ally_minions:
                 if minion.get_health() == min_health:
                     return minion
+
+
+class Raptor(Minion):
+    def __init__(self,health, shield, **kwargs):
+        super().__init__(health, shield,**kwargs)
+        self._name = "Raptor"
+        self._symbol = "R"
+        self._health = health
+        self._shield =shield
+        self._cost = 2
+        self._strength = health
+        self._effect = {'damage': self._health}
+        self._description = f"Summon a Bloodfen {self._name} to fight for you."
+
+    def apply_health(self, health: int):
+        """Overring apply_health in Card class"""
+        super().apply_health(health)
+        self._strength = self._health
+        self._effect['damage'] = self._health  # Update damage effect
+
+    def choose_target(self, ally_hero: Entity, enemy_hero: Entity, ally_minions: list[Entity],
+                      enemy_minions: list[Entity]) -> Entity:
+        healths=[]
+        if len(enemy_minions) != 0:
+            for _ in enemy_minions:
+                healths.append(_.get_health())
+            max_val =max(healths)
+            index_max =healths.index(max_val)
+            return enemy_minions[index_max]
+        else:
+            return enemy_hero
+
 
 def main() -> None:
     pass
