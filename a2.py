@@ -95,7 +95,7 @@ class CardDeck():
     def __repr__(self) -> str:
         """Return reconstructable string representation."""
         card_rep =[]
-        for card in self._cards:
+        for card in self._cards:   # This is messy should redo to keep encapsulation. (Need to add __repr__  to Fireball)
             if isinstance(card, Fireball):
                 card_rep.append(f"{card.__class__.__name__}({card._turns})")
 
@@ -293,7 +293,7 @@ class Wyrm(Minion):
         # Find minimum health value among targets
         min_health = min(target.get_health() for target in potential_targets)
 
-        # Get all targets with minimum health
+        # Get all targets with min health
         min_health_targets = [target for target in potential_targets
                               if target.get_health() == min_health]
 
@@ -336,6 +336,68 @@ class Raptor(Minion):
             return enemy_minions[index_max]
         else:
             return enemy_hero
+
+
+class HearthModel():
+    def __init__(self, player: Hero, active_player_minions: list[Minion], enemy: Hero, active_enemy_minions: list[Minion]):
+        self._player = player
+        self._active_player_minions =active_player_minions
+        self._enemy = enemy
+        self._active_enemy_minions =active_enemy_minions
+
+    def __str__(self):
+        # player minions
+        player_minions_str = ";".join(
+            f"{minion._symbol},{minion._health},{minion._shield}"
+            for minion in self._active_player_minions
+        )
+
+        # enemy minions
+        enemy_minions_str = ";".join(
+            f"{minion._symbol},{minion._health},{minion._shield}"
+            for minion in self._active_enemy_minions
+        )
+
+        return f"{self._player}|{player_minions_str}|{self._enemy}|{enemy_minions_str}"
+
+    def __repr__(self):
+        return (f"HearthModel({repr(self._player)}, {repr(self._active_player_minions)}, "
+                f"{repr(self._enemy)}, {repr(self._active_enemy_minions)})")
+    def get_player(self) -> Hero:
+        return self._player
+
+    def get_enemy(self) -> Hero:
+        return self._enemy
+    def get_player_minions(self) -> list[Minion]:
+        return self._active_player_minions
+
+    def get_enemy_minions(self) -> list[Minion]:
+        return self._active_enemy_minions
+    def has_won(self) -> bool:
+        if self._player.is_alive() == True and not self._enemy.is_alive(): # not sure how to get this to work need way of checking the enemy if player chosen and need way of checking the player if enemy chosen as self ?
+            return True
+        else:
+            return False
+
+
+    def has_lost(self) -> bool:
+        return not self._player.is_alive()
+
+    def play_card(self, card: Card, target: Entity) -> bool:
+        pass
+
+    def discard_card(self, card: Card):
+        pass
+
+    def end_turn(self) -> list[str]:
+        pass
+
+
+
+
+
+
+
 
 
 def main() -> None:
