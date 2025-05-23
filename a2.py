@@ -374,14 +374,14 @@ class HearthModel():
     def get_enemy_minions(self) -> list[Minion]:
         return self._active_enemy_minions
     def has_won(self) -> bool:
-        if self._player.is_alive() == True and not self._enemy.is_alive(): # not sure how to get this to work need way of checking the enemy if player chosen and need way of checking the player if enemy chosen as self ?
+        if self._player.is_alive() == True and self._enemy.is_alive()== False: # not sure how to get this to work need way of checking the enemy if player chosen and need way of checking the player if enemy chosen as self ?
             return True
         else:
             return False
 
 
     def has_lost(self) -> bool:
-        return self._player.is_alive()
+        return not self._player.is_alive()
 
     def play_card(self, card: Card, target: Entity) -> bool:
         pass
